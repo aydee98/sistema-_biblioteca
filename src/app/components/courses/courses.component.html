@@ -1,0 +1,307 @@
+<div class="courses-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <h1>Gestión de Cursos</h1>
+      <p>Administra y organiza todos los cursos del sistema</p>
+    </div>
+    <div class="header-stats">
+      <div class="stat">
+        <span class="stat-number">{{ courses.length }}</span>
+        <span class="stat-label">Total Cursos</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">{{ getTotalStudents() }}</span>
+        <span class="stat-label">Estudiantes</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">${{ getTotalRevenue() }}</span>
+        <span class="stat-label">Ingresos</span>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="filters-card">
+    <div class="search-section">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          placeholder="Buscar cursos por nombre, descripción o instructor..."
+          class="search-input"
+        >
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-group">
+        <label for="categoryFilter">Categoría:</label>
+        <select
+          id="categoryFilter"
+          [(ngModel)]="selectedCategory"
+          (change)="onFilterChange()"
+          class="filter-select"
+        >
+          <option value="all">Todas las categorías</option>
+          <option *ngFor="let category of categories" [value]="category">
+            {{ category }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="levelFilter">Nivel:</label>
+        <select
+          id="levelFilter"
+          [(ngModel)]="selectedLevel"
+          (change)="onFilterChange()"
+          class="filter-select"
+        >
+          <option value="all">Todos los niveles</option>
+          <option value="beginner">Principiante</option>
+          <option value="intermediate">Intermedio</option>
+          <option value="advanced">Avanzado</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="form-card">
+    <h3>{{ editingCourse ? 'Editar Curso' : 'Crear Nuevo Curso' }}</h3>
+    
+    <div class="form-grid">
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="courseName">Nombre del Curso *</label>
+        <input
+          id="courseName"
+          type="text"
+          [ngModel]="editingCourse ? editingCourse.name : newCourse.name"
+          (ngModelChange)="editingCourse ? editingCourse.name = $event : newCourse.name = $event"
+          placeholder="Ingrese el nombre del curso"
+          class="form-input"
+        >
+      </div>
+
+      
+      <div class="form-group">
+        <label for="courseInstructor">Instructor *</label>
+        <input
+          id="courseInstructor"
+          type="text"
+          [ngModel]="editingCourse ? editingCourse.instructor : newCourse.instructor"
+          (ngModelChange)="editingCourse ? editingCourse.instructor = $event : newCourse.instructor = $event"
+          placeholder="Nombre del instructor"
+          class="form-input"
+        >
+      </div>
+
+      
+      <div class="form-group">
+        <label for="courseCategory">Categoría *</label>
+        <select
+          id="courseCategory"
+          [ngModel]="editingCourse ? editingCourse.category : newCourse.category"
+          (ngModelChange)="editingCourse ? editingCourse.category = $event : newCourse.category = $event"
+          class="form-input"
+        >
+          <option value="">Seleccione una categoría</option>
+          <option *ngFor="let category of categories" [value]="category">
+            {{ category }}
+          </option>
+        </select>
+      </div>
+
+      
+      <div class="form-group">
+        <label for="courseLevel">Nivel *</label>
+        <select
+          id="courseLevel"
+          [ngModel]="editingCourse ? editingCourse.level : newCourse.level"
+          (ngModelChange)="editingCourse ? editingCourse.level = $event : newCourse.level = $event"
+          class="form-input"
+        >
+          <option value="beginner">Principiante</option>
+          <option value="intermediate">Intermedio</option>
+          <option value="advanced">Avanzado</option>
+        </select>
+      </div>
+
+      
+      <div class="form-group">
+        <label for="courseDuration">Duración (horas) *</label>
+        <input
+          id="courseDuration"
+          type="number"
+          [ngModel]="editingCourse ? editingCourse.duration : newCourse.duration"
+          (ngModelChange)="editingCourse ? editingCourse.duration = $event : newCourse.duration = $event"
+          placeholder="Duración en horas"
+          class="form-input"
+          min="0"
+        >
+      </div>
+
+      
+      <div class="form-group">
+        <label for="coursePrice">Precio ($) *</label>
+        <input
+          id="coursePrice"
+          type="number"
+          [ngModel]="editingCourse ? editingCourse.price : newCourse.price"
+          (ngModelChange)="editingCourse ? editingCourse.price = $event : newCourse.price = $event"
+          placeholder="Precio del curso"
+          class="form-input"
+          min="0"
+          step="0.01"
+        >
+      </div>
+
+      
+      <div class="form-group full-width">
+        <label for="courseDescription">Descripción *</label>
+        <textarea
+          id="courseDescription"
+          [ngModel]="editingCourse ? editingCourse.description : newCourse.description"
+          (ngModelChange)="editingCourse ? editingCourse.description = $event : newCourse.description = $event"
+          placeholder="Descripción detallada del curso"
+          class="form-textarea"
+          rows="3"
+        ></textarea>
+      </div>
+
+      
+      <div class="form-group">
+        <label for="courseStartDate">Fecha de Inicio</label>
+        <input
+          id="courseStartDate"
+          type="date"
+          [ngModel]="editingCourse ? editingCourse.startDate : newCourse.startDate"
+          (ngModelChange)="editingCourse ? editingCourse.startDate = $event : newCourse.startDate = $event"
+          class="form-input"
+        >
+      </div>
+    </div>
+
+    <div class="form-actions">
+      @if (editingCourse) {
+        <button type="button" (click)="updateCourse()" class="btn btn-primary">
+          Actualizar Curso
+        </button>
+        <button type="button" (click)="cancelEdit()" class="btn btn-secondary">
+          Cancelar
+        </button>
+      } @else {
+        <button type="button" (click)="addCourse()" class="btn btn-primary">
+          Crear Curso
+        </button>
+      }
+    </div>
+  </div>
+
+  
+  <div class="courses-list-card">
+    <div class="list-header">
+      <h3>Cursos Disponibles ({{ filteredCourses.length }})</h3>
+      <span class="results-info">
+        Mostrando {{ filteredCourses.length }} de {{ courses.length }} cursos
+      </span>
+    </div>
+
+    @if (filteredCourses.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📚</div>
+        <h4>No se encontraron cursos</h4>
+        <p>Intenta ajustar los filtros de búsqueda</p>
+      </div>
+    } @else {
+      <div class="courses-grid">
+        @for (course of filteredCourses; track course.id) {
+          <div class="course-card" [class.inactive]="!course.isActive">
+            <div class="course-header">
+              <div class="course-status">
+                <span [class]="course.isActive ? 'status-active' : 'status-inactive'">
+                  {{ course.isActive ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+              <div class="course-actions">
+                <button 
+                  (click)="editCourse(course)" 
+                  class="btn-action btn-edit"
+                  title="Editar curso"
+                >
+                  ✏️
+                </button>
+                <button 
+                  (click)="deleteCourse(course.id)" 
+                  class="btn-action btn-delete"
+                  title="Eliminar curso"
+                >
+                  🗑️
+                </button>
+              </div>
+            </div>
+
+            <div class="course-content">
+              <h4 class="course-title">{{ course.name }}</h4>
+              <p class="course-description">{{ course.description }}</p>
+              
+              <div class="course-meta">
+                <div class="meta-item">
+                  <span class="meta-icon">👨‍🏫</span>
+                  <span class="meta-text">{{ course.instructor }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">⏱️</span>
+                  <span class="meta-text">{{ course.duration }}h</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">🎯</span>
+                  <span [class]="'level-badge ' + getLevelBadgeClass(course.level)">
+                    {{ getLevelDisplayName(course.level) }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="course-category">
+                <span class="category-tag">{{ course.category }}</span>
+              </div>
+            </div>
+
+            <div class="course-footer">
+              <div class="course-stats">
+                <div class="stat">
+                  <span class="stat-value">${{ course.price }}</span>
+                  <span class="stat-label">Precio</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ course.students }}</span>
+                  <span class="stat-label">Estudiantes</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ course.rating }}</span>
+                  <span class="stat-label">Rating</span>
+                </div>
+              </div>
+              
+              <div class="rating-stars">
+                {{ getRatingStars(course.rating) }}
+              </div>
+
+              <button 
+                (click)="toggleCourseStatus(course)" 
+                [class]="course.isActive ? 'btn btn-warning' : 'btn btn-success'"
+                class="status-btn"
+              >
+                {{ course.isActive ? 'Desactivar' : 'Activar' }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,9 @@
+@if (isLoggedIn()) {
+  <nav class="navbar">
+    <a routerLink="/dashboard">Dashboard</a>
+    <a routerLink="/users">Usuarios</a>
+    <a routerLink="/courses">Cursos</a>
+    <button (click)="logout()">Cerrar Sesión</button>
+  </nav>
+}
+<router-outlet></router-outlet>

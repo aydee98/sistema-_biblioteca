@@ -1,0 +1,172 @@
+<div class="users-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <h1>Gestión de Usuarios</h1>
+      <p>Administra los usuarios del sistema educativo</p>
+    </div>
+    <div class="header-stats">
+      <div class="stat">
+        <span class="stat-number">{{ getTotalUsers() }}</span>
+        <span class="stat-label">Total Usuarios</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">{{ getUsersByRole('admin') }}</span>
+        <span class="stat-label">Administradores</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">{{ getUsersByRole('teacher') }}</span>
+        <span class="stat-label">Profesores</span>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="filters-card">
+    <div class="search-section">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          placeholder="Buscar usuarios por nombre o email..."
+          class="search-input"
+        >
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-group">
+        <label for="roleFilter">Rol:</label>
+        <select
+          id="roleFilter"
+          [(ngModel)]="selectedRole"
+          (change)="onFilterChange()"
+          class="filter-select"
+        >
+          <option value="all">Todos los roles</option>
+          <option value="admin">Administrador</option>
+          <option value="teacher">Profesor</option>
+          <option value="student">Estudiante</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="form-card">
+    <h3>{{ editingUser ? 'Editar Usuario' : 'Crear Nuevo Usuario' }}</h3>
+    
+    <div class="form-grid">
+      
+      <div class="form-group">
+        <label for="userName">Nombre completo *</label>
+        <input
+          id="userName"
+          type="text"
+          [ngModel]="editingUser ? editingUser.name : newUser.name"
+          (ngModelChange)="editingUser ? editingUser.name = $event : newUser.name = $event"
+          placeholder="Ingrese el nombre completo"
+          class="form-input"
+        >
+      </div>
+
+      
+      <div class="form-group">
+        <label for="userEmail">Correo electrónico *</label>
+        <input
+          id="userEmail"
+          type="email"
+          [ngModel]="editingUser ? editingUser.email : newUser.email"
+          (ngModelChange)="editingUser ? editingUser.email = $event : newUser.email = $event"
+          placeholder="Ingrese el correo electrónico"
+          class="form-input"
+        >
+      </div>
+
+      
+      <div class="form-group">
+        <label for="userRole">Rol *</label>
+        <select
+          id="userRole"
+          [ngModel]="editingUser ? editingUser.role : newUser.role"
+          (ngModelChange)="editingUser ? editingUser.role = $event : newUser.role = $event"
+          class="form-input"
+        >
+          <option value="student">Estudiante</option>
+          <option value="teacher">Profesor</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      @if (editingUser) {
+        <button type="button" (click)="updateUser()" class="btn btn-primary">
+          Actualizar Usuario
+        </button>
+        <button type="button" (click)="cancelEdit()" class="btn btn-secondary">
+          Cancelar
+        </button>
+      } @else {
+        <button type="button" (click)="addUser()" class="btn btn-primary">
+          Crear Usuario
+        </button>
+      }
+    </div>
+  </div>
+
+  
+  <div class="users-list-card">
+    <div class="list-header">
+      <h3>Lista de Usuarios ({{ filteredUsers.length }})</h3>
+      <span class="results-info">
+        Mostrando {{ filteredUsers.length }} de {{ users.length }} usuarios
+      </span>
+    </div>
+
+    @if (filteredUsers.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">👥</div>
+        <h4>No se encontraron usuarios</h4>
+        <p>Intenta ajustar los filtros de búsqueda</p>
+      </div>
+    } @else {
+      <div class="users-grid">
+        @for (user of filteredUsers; track user.id) {
+          <div class="user-card">
+            <div class="user-avatar">
+              {{ user.name.charAt(0).toUpperCase() }}
+            </div>
+            
+            <div class="user-info">
+              <h4 class="user-name">{{ user.name }}</h4>
+              <p class="user-email">{{ user.email }}</p>
+              <span [class]="'role-badge ' + getRoleBadgeClass(user.role)">
+                {{ getRoleDisplayName(user.role) }}
+              </span>
+            </div>
+
+            <div class="user-actions">
+              <button 
+                (click)="editUser(user)" 
+                class="btn-action btn-edit"
+                title="Editar usuario"
+              >
+                ✏️
+              </button>
+              <button 
+                (click)="deleteUser(user.id)" 
+                class="btn-action btn-delete"
+                title="Eliminar usuario"
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
